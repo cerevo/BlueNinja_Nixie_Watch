@@ -31,6 +31,7 @@ limitations under the License.
 #include "TMR_TZ10xx.h"
 /* Board support. */
 #include "TZ01_system.h"
+#include "utils.h"
 
 #if TZ01_CONSOLE_ENABLE
     #include "TZ01_console.h"
@@ -61,6 +62,7 @@ static const TZ10XX_DRIVER_GPIO *tz10xx_drv_gpio = &Driver_GPIO;
 #endif
 
 /** Power switch control functions. **/
+#if TZ01_POW_MGR
 static bool tz01_system_pwsw_powon(void)
 {
     /* Clear sw history. */
@@ -76,7 +78,6 @@ static bool tz01_system_pwsw_powon(void)
     if (tz10xx_drv_gpio->WritePin(TZ01_SYSTEM_PWSW_PORT_LED, 1) == GPIO_ERROR) {
         return false;
     }
-
     return true;
 }
 
@@ -96,7 +97,6 @@ static bool tz01_system_pwsw_powoff(void)
     if (tz10xx_drv_gpio->WritePin(TZ01_SYSTEM_PWSW_PORT_LED, 0) == GPIO_ERROR) {
         return false;
     }
-
     return true;
 }
 
@@ -121,7 +121,7 @@ static int tz01_system_pwsw_uvdetect_check(void)
 
     return (val & 0x01);
 }
-
+#endif
 
 /** Tick timer manage functions. **/
 bool TZ01_system_tick_clear(void)
@@ -144,12 +144,8 @@ bool TZ01_system_tick_start(TZ01_SYSTEM_TICK_NO tim_no, uint32_t ms_timeout)
     
     prescale = tz10xx_drv_pmu->GetPrescaler(PMU_CD_PPIER0);
     tmr_clock = 48000 / prescale;   //kHz
-    
-    if (tim_no >= _TICK_NO_COUNT) {
-        return false;
-    }
 
-    if (ms_timeout > 1800000) {
+    if (tim_no >= _TICK_NO_COUNT) {
         return false;
     }
 
@@ -217,7 +213,7 @@ bool TZ01_system_tick_check_timeout(TZ01_SYSTEM_TICK_NO tim_no)
     diff = (int32_t)((uint32_t)tick_curr - (uint32_t)tz01_system_tick.timers[tim_no].timeout);
     if (diff < 0) {
         TZ01_system_tick_stop(tim_no);
-        return true;    /* �^�C���A�E�g���� */
+        return true;
     }
 
     return false;
@@ -226,29 +222,33 @@ bool TZ01_system_tick_check_timeout(TZ01_SYSTEM_TICK_NO tim_no)
 /** System **/
 bool TZ01_system_init(void)
 {
+#if TZ01_POW_MGR
+    Usleep(TZ01_SYSTEM_PW_HLD_DELAY);
+#endif
     /* PMU */
     tz10xx_drv_pmu->Initialize(NULL);
     tz10xx_drv_pmu->SelectClockSource(PMU_CSM_MAIN, PMU_CLOCK_SOURCE_PLL);
-    tz10xx_drv_pmu->SelectClockSource(PMU_CSM_UART0, PMU_CLOCK_SOURCE_OSC12M);
     tz10xx_drv_pmu->SetPrescaler(PMU_CD_MPIER, 1);
-    tz10xx_drv_pmu->SetPrescaler(PMU_CD_PPIER0, 24); /* 2MHz */
+    tz10xx_drv_pmu->SetPrescaler(PMU_CD_PPIER0, 2);
     tz10xx_drv_pmu->SetPrescaler(PMU_CD_PPIER1, 4);
     tz10xx_drv_pmu->SetPrescaler(PMU_CD_PPIER2, 4);
-    tz10xx_drv_pmu->SetPrescaler(PMU_CD_UART0, 1);
-
+#if TZ01_POW_MGR
     tz10xx_drv_pmu->StandbyInputBuffer(PMU_IO_FUNC_GPIO_1, 0);   /* Power Switch */
     tz10xx_drv_pmu->StandbyInputBuffer(PMU_IO_FUNC_GPIO_4, 0);   /* UVdetect */
-
+#endif
     /* GPIO */
     tz10xx_drv_gpio->Initialize();
     tz10xx_drv_gpio->PowerControl(ARM_POWER_FULL);
     /** DO **/
     tz10xx_drv_gpio->Configure(TZ01_SYSTEM_PWSW_PORT_LED, GPIO_DIRECTION_OUTPUT_2MA, GPIO_EVENT_DISABLE, NULL);  /* Power LED  */
+#if TZ01_POW_MGR
     tz10xx_drv_gpio->Configure(TZ01_SYSTEM_PWSW_PORT_HLD, GPIO_DIRECTION_OUTPUT_2MA, GPIO_EVENT_DISABLE, NULL);  /* Power Hold */
+#endif
     /** DI **/
+#if TZ01_POW_MGR
     tz10xx_drv_gpio->Configure(TZ01_SYSTEM_PWSW_PORT_SW,  GPIO_DIRECTION_INPUT_HI_Z, GPIO_EVENT_DISABLE, NULL);  /* Power Switch */
     tz10xx_drv_gpio->Configure(TZ01_SYSTEM_PWSW_PORT_UVD, GPIO_DIRECTION_INPUT_HI_Z, GPIO_EVENT_DISABLE, NULL);  /* UVdetect */
-
+#endif
     /* TMR */
     if (tz10xx_drv_tmr->Initialize(NULL, 0) == TMR_OK) {
         tz10xx_drv_tmr->Configure(32, TMR_COUNT_MODE_FREE_RUN, 1);
@@ -259,56 +259,57 @@ bool TZ01_system_init(void)
             return false;
         }
     }
-
+#if TZ01_POW_MGR
     /* Power On */
     if (tz01_system_pwsw_powon() == false) {
         return false;
     }
-
+#endif
     /* SW check timer enable. */
-    TZ01_system_tick_start(SYSTICK_NO_PWSW_CHECK, 100);
+    TZ01_system_tick_start(SYSTICK_NO_PWSW_CHECK, 0);
     TZ01_system_tick_start(SYSTICK_NO_LED_BLINK, 500);
 
     return true;
 }
 
-uint8_t led_v = 0;
-bool TZ01_system_run(void)
+TZ01_system_RUNEVT TZ01_system_run(void)
 {
+    static uint8_t led_v = 0;
+#if TZ01_POW_MGR
+    static const uint16_t PWSW_MASK = (1 << TZ01_SYSTEM_PW_OFF_CNT) - 1;
+    
     if (TZ01_system_tick_check_timeout(SYSTICK_NO_PWSW_CHECK)) {
-        TZ01_system_tick_start(SYSTICK_NO_PWSW_CHECK, 400);
+        TZ01_system_tick_start(SYSTICK_NO_PWSW_CHECK, TZ01_SYSTEM_PWSW_CHK_INTVAL);
         /* Power switch */
         sw_history <<= 1;
-        sw_history &= 0x001f;
+        sw_history &= PWSW_MASK;
         sw_history |= tz01_system_pwsw_check();
 
         if (sw_history == 0x00) {
-            /* PowerSwitch Hold. (2000ms) */
+            /* PowerSwitch Hold. (TZ01_SYSTEM_PWSW_CHK_INTVAL * TZ01_SYSTEM_PW_OFF_CNT)[ms] */
             if (tz01_system_pwsw_powoff()) {
-                return false;
+                return RUNEVT_POWOFF;
             }
         }
-
         /* UVdetect */
         uv_history <<= 1;
         uv_history &= 0x0007;
         uv_history |= tz01_system_pwsw_uvdetect_check();
-
         if (uv_history == 0x00) {
             if (tz01_system_pwsw_powoff()) {
-                return false;
+                return RUNEVT_LO_VOLT;
             }
         }
     }
-
+#endif
     /* Blink hart beat LED. */
-    /*
+#if TZ01_HARTBEAT
     if (TZ01_system_tick_check_timeout(SYSTICK_NO_LED_BLINK)) {
         TZ01_system_tick_start(SYSTICK_NO_LED_BLINK, 500);
 
         led_v = (led_v == 0) ? 1 : 0;
         tz10xx_drv_gpio->WritePin(TZ01_SYSTEM_PWSW_PORT_LED, led_v);
     }
-    */
-    return true;
+#endif
+    return RUNEVT_NONE;
 }

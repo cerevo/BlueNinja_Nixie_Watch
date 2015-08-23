@@ -473,7 +473,7 @@
 // <i> Configuration settings for Driver_UART2 in component ::Drivers:UART
 //  <o1> UA2_RXD pin <1=>MCU_UA2_RXD
 //  <o2> UA2_TXD pin <1=>MCU_UA2_TXD
-#define RTE_UART2 0
+#define RTE_UART2 1
 #if RTE_UART2
 #define RTE_UA2_RXD_ID 1
 #define RTE_UA2_TXD_ID 1
@@ -485,7 +485,7 @@
 //   <o1> UA2_RTS_N pin <1=>MCU_UA2_RTS_N
 //   <o2> UA2_CTS_N pin <1=>MCU_UA2_CTS_N
 //  </e>
-#define RTE_UART2_HW_FLOW 0
+#define RTE_UART2_HW_FLOW 1
 #if RTE_UART2 && RTE_UART2_HW_FLOW
 #define RTE_UA2_RTS_N_ID 1
 #define RTE_UA2_CTS_N_ID 1
@@ -682,7 +682,7 @@
 // </e>
 
 // <e> RNG (Random Number Generator)
-#define RTE_RNG 0
+#define RTE_RNG 1
 // </e>
 
 // <e> NOR (internal flash)
@@ -775,7 +775,7 @@
 // </e>
 
 // <e> BLE (Bluetooth Low Energy)
-#define RTE_BLE 0
+#define RTE_BLE 1
 // </e>
 
 // <e> ACCEL (internal accelerometer)

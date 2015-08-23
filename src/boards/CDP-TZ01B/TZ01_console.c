@@ -26,6 +26,7 @@ limitations under the License.
 #include <stdbool.h>
 /* MCU support. */
 #include "TZ10xx.h"
+#include "PMU_TZ10xx.h"
 #include "Driver_UART.h"
 /* Board support. */
 #include "TZ01_system.h"
@@ -35,18 +36,31 @@ limitations under the License.
 
 #define PUTS_LEN_MAX    (120)
 
+extern TZ10XX_DRIVER_PMU  Driver_PMU;
 #if TZ01_CONSOLE_UART_CH == 0
+    /* UART0 */
     extern ARM_DRIVER_UART Driver_UART0;
     ARM_DRIVER_UART *tz10xx_drv_uart = &Driver_UART0;
+    #define PMU_CSM_UART    PMU_CSM_UART0
+    #define PMU_CD_UART     PMU_CD_UART0
+    /*-------*/
 #elif TZ01_CONSOLE_UART_CH == 1
+    /* UART1 */
     extern ARM_DRIVER_UART Driver_UART1;
     ARM_DRIVER_UART *tz10xx_drv_uart = &Driver_UART1;
+    #define PMU_CSM_UART    PMU_CSM_UART1
+    #define PMU_CD_UART     PMU_CD_UART1
+    /*------*/
 #else
     #error Invalid UART ch.
 #endif
 
 bool TZ01_console_init(void)
 {
+    /* PMU */
+    Driver_PMU.SelectClockSource(PMU_CSM_UART, PMU_CLOCK_SOURCE_OSC12M);
+    Driver_PMU.SetPrescaler(PMU_CD_UART, 1);
+    /* UART */
     tz10xx_drv_uart->Initialize(0, 0);
     tz10xx_drv_uart->Configure(TZ01_CONSOLE_BAUD, 8, ARM_UART_PARITY_NONE, ARM_UART_STOP_BITS_1, ARM_UART_FLOW_CONTROL_NONE);
     tz10xx_drv_uart->PowerControl(ARM_POWER_FULL);

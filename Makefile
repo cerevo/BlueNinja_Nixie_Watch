@@ -17,7 +17,7 @@ LIBS    =
 
 #Include dir, Source files.
 INCLUDE = -IRTE -IRTE/Device/TZ1001MBG
-SOURCES = src/main.c src/nixie_digit.c
+SOURCES = src/main.c src/nixie_digit.c src/ble_cts.c
 include *.mk
 
 #Objects

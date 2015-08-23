@@ -1,9 +1,10 @@
 /**
  * @file   TZ01_system.h
  * @brief  System library for Cerevo CDP-TZ01B.
+ *
  * @author Cerevo Inc.
  */
-
+ 
 /*
 Copyright 2015 Cerevo Inc.
 
@@ -28,24 +29,38 @@ limitations under the License.
 #include "TZ01_system_conf.h"
 
 /**
- * @brief   Initialize system library.
- * @return  Initialize result.
- * @retval  true    Success.
- * @retval  false   Failed.
+ * @enum  TZ01_system_RUN_EVT
+ * @brief The type of event that occurrd in TZ01_system_run().
+ */
+typedef enum {
+    RUNEVT_NONE,        /*!< None */
+    RUNEVT_LO_VOLT,     /*!< Lo voltage detected. */
+    RUNEVT_POWOFF,      /*!< Power off operation detected. */
+}   TZ01_system_RUNEVT;
+
+/**
+ * @brief Initialize system library.
+ *
+ * @return Initialize result.
+ * @retval true : Success.
+ * @retval false: Failed.
  */
 bool TZ01_system_init(void);
 
 /**
- * @brief   Running system library.
- * @return  Running result.
- * @retval  true    Success.
- * @retval  false   Failed.
+ * @brief Running system library.
+ *
+ * @return Running result.
+ * @retval Event that occurrd.
  */
-bool TZ01_system_run(void);
+TZ01_system_RUNEVT TZ01_system_run(void);
+
+
+
 
 /**
- * @struct  TZ01_SYSTEM_TICK_INFO
- * @brief   Tick timer information.
+ * @struct TZ01_SYSTEM_TICK_INFO
+ * @brief Tick timer information.
  */
 typedef struct {
     bool        is_active;  /*!< Active flag (false: Deactive, true: Active) */
@@ -53,58 +68,62 @@ typedef struct {
 } TZ01_SYSTEM_TICK_INFO;
 
 /**
- * @struct  TZ01_SYSTEM_TICK
- * @brief   Tick timer
+ * @struct TZ01_SYSTEM_TICK
+ * @brief Tick timer
  */
 typedef struct {
     TZ01_SYSTEM_TICK_INFO  timers[_TICK_NO_COUNT];   /*!< Tick timer list */
 } TZ01_SYSTEM_TICK;
 
 /**
- * @brief   Clear tick timer
- * @return  Clear result
- * @retval  true    uccess.
- * @retval  false   Failed.
+ * @brief Clear tick timer
+ *
+ * @return Clear result
+ * @retval true : Success.
+ * @retval false: Failed.
  */
 bool TZ01_system_tick_clear(void);
 
 /**
- * @brief       Start tick timer
- * @param[in]   tim_no      Tick timer number.
- * @param[in]   ms_timeout  Timeout(UNIT: ms)
- * @return      Result
- * @retval      true    Success.
- * @retval      false   Failed.
+ * @brief Start tick timer
+ *
+ * @param[in] tim_no     Tick timer number.
+ * @param[in] ms_timeout Timeout(UNIT: ms)
+ * @return Result
+ * @retval true : Success.
+ * @retval false: Failed.
  */
 bool TZ01_system_tick_start(TZ01_SYSTEM_TICK_NO tim_no, uint32_t ms_timeout);
 
-bool TZ01_system_tick_start_us(TZ01_SYSTEM_TICK_NO tim_no, uint32_t ms_timeout);
-
 /**
- * @brief       Stop tick timer
- * @param[in]   tim_no Tick timer number.
- * @return      Result
- * @retval      true    Success.
- * @retval      false   Failed.
+ * @brief Stop tick timer
+ *
+ * @param[in] tim_no Tick timer number.
+ * @return Result
+ * @retval true : Success.
+ * @retval false: Failed.
  */
 bool TZ01_system_tick_stop(TZ01_SYSTEM_TICK_NO tim_no);
 
 /**
- * @brief       Get tick timer activity.
- * @param[in]   tim_no Tick timer number.
- * @return      Tick timer activity.
- * @retval      true    Active
- * @retval      false   Deactive
+ * @brief Get tick timer activity.
+ *
+ * @param[in] tim_no Tick timer number.
+ * @return Tick timer activity.
+ * @retval true : Active
+ * @retval false: Deactive
  */
 bool TZ01_system_tick_is_active(TZ01_SYSTEM_TICK_NO tim_no);
 
 /**
- * @brief       Check tick timer timeout.
- * @param[in]   tim_no Tick timer number.
- * @return      Timeout
- * @retval      true    Timeout.
- * @retval      false   Not timeout.
+ * @brief Check tick timer timeout.
+ *
+ * @param tim_no Tick timer number.
+ * @return Timeout
+ * @retval true : Timeout.
+ * @retval false: Not timeout.
  */
 bool TZ01_system_tick_check_timeout(TZ01_SYSTEM_TICK_NO tim_no);
+
 
 #endif /* _TZ01_SYSTEM_H_ */

@@ -47,7 +47,7 @@ limitations under the License.
  */
 /* @{ */
 #define BQ24250_DEF_01  (0x00)  /*!< Register 1 initial value */
-#define BQ24250_DEF_02  (0x2c)  /*!< Register 2 initial value (NIXIE Watch Custom ILIMIT=500mA) */
+#define BQ24250_DEF_02  (0x0c)  /*!< Register 2 initial value */
 #define BQ24250_DEF_03  (0x8f)  /*!< Register 3 initial value */
 #define BQ24250_DEF_04  (0xf8)  /*!< Register 4 initial value */
 #define BQ24250_DEF_05  (0x02)  /*!< Register 5 initial value */

@@ -188,10 +188,10 @@
 /* Health Thermometer Service */
 #undef TWIC_UTIL_HT_SERVICE
 /* User defined Service 128bit UUID (Experimental Temporary 128bit Service) */
-#define TWIC_UTIL_UU_SERVICE
-#define TWIC_UTIL_UU_CHARACTERISTICS
+#undef TWIC_UTIL_UU_SERVICE
+#undef TWIC_UTIL_UU_CHARACTERISTICS
 /* ANCS */
-#define TWIC_UTIL_ANCS
+#undef TWIC_UTIL_ANCS
 
 
 /*

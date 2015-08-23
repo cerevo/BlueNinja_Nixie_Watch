@@ -39,18 +39,28 @@ typedef enum {
     SYSTICK_NO_PWSW_CHECK,      /*!< SYSTEM: Check PowerSW interval. @note DO NOT EDIT. */
     /* USER DEFINITION TIMERS */
     USRTICK_NO_GPIO_INTERVAL,   /*!< USER: Check GPIO interval. */
-    USRTICK_NO_NIXIE_DISP,      /*!< USER: Nixie display. */
+    USRTICK_NO_BLE_MAIN,        /*!< USER: BLE event interval. */
+    USRTICK_NO_DISP_EVT_INTERVAL,
+    USRTICK_NO_NIXIE_DISP,
     /* TERMINATER */
     _TICK_NO_COUNT              /*!< TERMINATER: Tick timer count. @note DO NOT EDIT. */
 } TZ01_SYSTEM_TICK_NO;
 /* @} */
 
-/** @name POWER SWITCH */
+/** @name POWER MANAGE */
 /* @{ */
-#define TZ01_SYSTEM_PWSW_PORT_LED    (10)    /*!< OUT: Power LED */
-#define TZ01_SYSTEM_PWSW_PORT_HLD    (3)     /*!< OUT: Power Hold   */
-#define TZ01_SYSTEM_PWSW_PORT_SW     (1)     /*!< IN:  Power Switch */
-#define TZ01_SYSTEM_PWSW_PORT_UVD    (4)     /*!< IN:  UVdetect */
+#define TZ01_POW_MGR  1                     /*!< Enable Power management(Power Sw/Power Hold/Lo voltage detect) */
+#define TZ01_HARTBEAT 0                     /*!< Enable Hartbeat */
+#define TZ01_SYSTEM_PWSW_PORT_LED    (10)   /*!< OUT: Power LED */
+#if TZ01_POW_MGR
+#define TZ01_SYSTEM_PWSW_PORT_HLD    (3)    /*!< OUT: Power Hold   */
+#define TZ01_SYSTEM_PWSW_PORT_SW     (1)    /*!< IN:  Power Switch */
+#define TZ01_SYSTEM_PWSW_PORT_UVD    (4)    /*!< IN:  UVdetect */
+
+#define TZ01_SYSTEM_PW_HLD_DELAY    (0)     /*!< Power Hold delay(us) */
+#define TZ01_SYSTEM_PWSW_CHK_INTVAL (400)       /*!< PowerSwitch: Check interval (ms) */
+#define TZ01_SYSTEM_PW_OFF_CNT      (5)         /*!< PowerSwitch: Power off count (1 - 16) */
+#endif
 /* @} */
 
 /** @name CONSOLE */

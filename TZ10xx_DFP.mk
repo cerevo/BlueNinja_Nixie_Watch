@@ -14,7 +14,7 @@ SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/I2C_TZ10xx.c
 #SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/MAG_TZ10xx.c
 #SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/NOR_TZ10xx.c
 SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/PMU_TZ10xx.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/RNG_TZ10xx.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/RNG_TZ10xx.c
 SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/RTC_TZ10xx.c
 #SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/SDMAC_TZ10xx.c
 #SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/SPI_TZ10xx.c
@@ -27,16 +27,16 @@ SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver/UART_TZ10xx.c
 INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/RTE_Driver
 
 #Middleware
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/twic_hash.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/twic_interface.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/twic_service.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/tz1em.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/tz1em_service.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/blelib.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/blelib_callback.c
-#SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/blelib_peripheral_statemachine.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/twic_hash.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/twic_interface.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/twic_service.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/tz1em.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC/tz1em_service.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/blelib.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/blelib_callback.c
+SOURCES+=$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/blelib_peripheral_statemachine.c
 
 
-#INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC
-#INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib
-#INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/Config
+INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/TWiC
+INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib
+INCLUDE+=-I$(SDK_DIR)TOSHIBA.TZ10xx_DFP/Middleware/blelib/Config
